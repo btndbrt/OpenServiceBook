@@ -17,7 +17,7 @@ import java.util.Objects;
  * Each SERVICE line belongs to the CAR line above it:
  *
  * <pre>
- * CAR      vin   make   model   modelYear
+ * CAR      vin   plate  make   model   modelYear
  * SERVICE  date  mileage  cost  description
  * </pre>
  */
@@ -52,8 +52,8 @@ public final class ServiceBookFile {
             }
             String[] fields = line.split(SEPARATOR, -1);
             try {
-                if (fields[0].equals(CAR) && fields.length == 5) {
-                    currentCar = new Car(fields[1], fields[2], fields[3], Year.of(Integer.parseInt(fields[4])));
+                if (fields[0].equals(CAR) && fields.length == 6) {
+                    currentCar = new Car(fields[1], fields[2], fields[3], fields[4], Year.of(Integer.parseInt(fields[5])));
                     book.addCar(currentCar);
                 } else if (fields[0].equals(SERVICE) && fields.length == 5) {
                     if (currentCar == null) {
@@ -75,7 +75,7 @@ public final class ServiceBookFile {
         Objects.requireNonNull(book, "book");
         List<String> lines = new ArrayList<>();
         for (Car car : book.getCars()) {
-            lines.add(String.join(SEPARATOR, CAR, car.getVin(), car.getMake(), car.getModel(),
+            lines.add(String.join(SEPARATOR, CAR, car.getVin(), car.getPlate(), car.getMake(), car.getModel(),
                     Integer.toString(car.getModelYear().getValue())));
             for (Service service : car.getServices()) {
                 lines.add(String.join(SEPARATOR, SERVICE, service.getDate().toString(),

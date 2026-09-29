@@ -1,5 +1,6 @@
 package org.openservicebook;
 
+import java.util.Locale;
 import java.util.Objects;
 
 final class Text {
@@ -17,5 +18,10 @@ final class Text {
             throw new IllegalArgumentException(name + " must not contain tabs or line breaks");
         }
         return value.strip();
+    }
+
+    // Loose form used to compare VINs and plates: "abc 123", "ABC-123" and "ABC123" all become "ABC123".
+    static String lookupKey(String value) {
+        return value.replace(" ", "").replace("-", "").toUpperCase(Locale.ROOT);
     }
 }

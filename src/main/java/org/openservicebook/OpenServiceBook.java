@@ -6,10 +6,7 @@ public final class OpenServiceBook {
     }
 
     public static void main(String[] args) {
-        System.out.println(greeting());
-    }
-
-    static String greeting() {
-        return "OpenServiceBook";
+        CommandLine commandLine = new CommandLine(ServiceBookFile.inHomeFolder(), System.out, System.err);
+        System.exit(commandLine.run(args));
     }
 }

@@ -8,13 +8,18 @@ import java.util.Objects;
 public final class Car {
 
     private final String vin;
+    private final String plate;
     private final String make;
     private final String model;
     private final Year modelYear;
     private final List<Service> services = new ArrayList<>();
 
-    public Car(String vin, String make, String model, Year modelYear) {
+    public Car(String vin, String plate, String make, String model, Year modelYear) {
         this.vin = Text.requireSingleLine(vin, "vin");
+        this.plate = Text.requireSingleLine(plate, "plate");
+        if (Text.lookupKey(this.plate).isEmpty()) {
+            throw new IllegalArgumentException("plate must contain letters or digits");
+        }
         this.make = Text.requireSingleLine(make, "make");
         this.model = Text.requireSingleLine(model, "model");
         this.modelYear = Objects.requireNonNull(modelYear, "modelYear");
@@ -22,6 +27,10 @@ public final class Car {
 
     public String getVin() {
         return vin;
+    }
+
+    public String getPlate() {
+        return plate;
     }
 
     public String getMake() {
@@ -48,6 +57,7 @@ public final class Car {
     public boolean equals(Object o) {
         return o instanceof Car other
                 && vin.equals(other.vin)
+                && plate.equals(other.plate)
                 && make.equals(other.make)
                 && model.equals(other.model)
                 && modelYear.equals(other.modelYear);
@@ -55,11 +65,12 @@ public final class Car {
 
     @Override
     public int hashCode() {
-        return Objects.hash(vin, make, model, modelYear);
+        return Objects.hash(vin, plate, make, model, modelYear);
     }
 
     @Override
     public String toString() {
-        return "Car[vin=" + vin + ", make=" + make + ", model=" + model + ", modelYear=" + modelYear + "]";
+        return "Car[vin=" + vin + ", plate=" + plate + ", make=" + make + ", model=" + model
+                + ", modelYear=" + modelYear + "]";
     }
 }
