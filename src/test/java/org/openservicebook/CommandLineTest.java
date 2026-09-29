@@ -24,6 +24,7 @@ class CommandLineTest {
     Path folder;
 
     private ServiceBookFile file;
+    private Installer installer;
 
     // Instead of the real screen, the command line prints into these buffers so the tests can read what it printed.
     private ByteArrayOutputStream out;
@@ -32,6 +33,7 @@ class CommandLineTest {
     @BeforeEach
     void setUp() {
         file = new ServiceBookFile(folder.resolve("servicebook.txt"));
+        installer = new Installer(folder.resolve("app"), folder.resolve("bin"));
         out = new ByteArrayOutputStream();
         err = new ByteArrayOutputStream();
     }
@@ -39,7 +41,7 @@ class CommandLineTest {
     private int runCommand(String... args) {
         out.reset();
         err.reset();
-        CommandLine commandLine = new CommandLine(file,
+        CommandLine commandLine = new CommandLine(file, installer,
                 new PrintStream(out, true, StandardCharsets.UTF_8), new PrintStream(err, true, StandardCharsets.UTF_8));
         return commandLine.run(args);
     }
@@ -192,5 +194,14 @@ class CommandLineTest {
         runCommand("list-cars");
 
         assertFalse(Files.exists(folder.resolve("servicebook.txt")));
+    }
+
+    // Tests run from compiled class folders, not from a jar, so install must refuse and create nothing.
+    @Test
+    void installRefusesWhenNotRunningFromAJar() {
+        assertEquals(1, runCommand("install"));
+
+        assertTrue(err().contains("install only works when running from the jar file"), err());
+        assertFalse(Files.exists(folder.resolve("bin")));
     }
 }

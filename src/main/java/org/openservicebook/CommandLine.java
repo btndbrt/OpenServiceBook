@@ -2,6 +2,8 @@ package org.openservicebook;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.Year;
@@ -20,14 +22,17 @@ public final class CommandLine {
             "  osb add-car <vin> <plate> <make> <model> <year>",
             "  osb add-service <vin-or-plate> <date> <mileage> <cost> <description>",
             "  osb list-cars",
-            "  osb services <vin-or-plate>");
+            "  osb services <vin-or-plate>",
+            "  osb install");
 
     private final ServiceBookFile file;
+    private final Installer installer;
     private final PrintStream out;
     private final PrintStream err;
 
-    public CommandLine(ServiceBookFile file, PrintStream out, PrintStream err) {
+    public CommandLine(ServiceBookFile file, Installer installer, PrintStream out, PrintStream err) {
         this.file = Objects.requireNonNull(file, "file");
+        this.installer = Objects.requireNonNull(installer, "installer");
         this.out = Objects.requireNonNull(out, "out");
         this.err = Objects.requireNonNull(err, "err");
     }
@@ -44,6 +49,7 @@ public final class CommandLine {
                 case "add-service" -> addService(args);
                 case "list-cars" -> listCars(args);
                 case "services" -> services(args);
+                case "install" -> install(args);
                 case "help" -> out.println(USAGE);
                 default -> throw new IllegalArgumentException("unknown command: " + args[0] + System.lineSeparator() + USAGE);
             }
@@ -102,6 +108,22 @@ public final class CommandLine {
         for (Service service : services) {
             out.printf("%s  %8d  %10s  %s%n",
                     service.getDate(), service.getMileage(), service.getCost(), service.getDescription());
+        }
+    }
+
+    private void install(String[] args) throws IOException {
+        requireArgumentCount(args, 1, "osb install");
+        installer.install(runningJar());
+        out.println("Installed. You can now run: osb help");
+        out.println("(If \"osb\" is not found, add ~/.local/bin to your PATH.)");
+    }
+
+    // The file the OpenServiceBook class was loaded from: the jar, when started with java -jar.
+    private static Path runningJar() {
+        try {
+            return Path.of(OpenServiceBook.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("could not find the program's jar file", e);
         }
     }
 
