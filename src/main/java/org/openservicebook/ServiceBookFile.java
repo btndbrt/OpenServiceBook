@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.Year;
@@ -84,6 +85,11 @@ public final class ServiceBookFile {
 
         Path folder = path.toAbsolutePath().getParent();
         Files.createDirectories(folder);
-        Files.write(path, lines, StandardCharsets.UTF_8);
+
+        // Write everything to a temporary file first, then swap it in with a single rename.
+        // If the program dies mid-write, only the temporary file is damaged; the real file is untouched.
+        Path temporary = folder.resolve(path.getFileName() + ".tmp");
+        Files.write(temporary, lines, StandardCharsets.UTF_8);
+        Files.move(temporary, path, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
     }
 }

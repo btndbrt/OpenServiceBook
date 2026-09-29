@@ -64,6 +64,30 @@ class ServiceBookFileTest {
     }
 
     @Test
+    void replacesPreviousSave() throws IOException {
+        ServiceBookFile file = new ServiceBookFile(folder.resolve("servicebook.txt"));
+        ServiceBook first = new ServiceBook();
+        first.addCar(new Car("WVWZZZ1JZXW000001", "Volkswagen", "Golf", Year.of(1999)));
+        file.save(first);
+        Car accord = new Car("JHMCM56557C404453", "Honda", "Accord", Year.of(2007));
+        ServiceBook second = new ServiceBook();
+        second.addCar(accord);
+
+        file.save(second);
+
+        assertEquals(List.of(accord), file.load().getCars());
+    }
+
+    @Test
+    void leavesNoTemporaryFileBehind() throws IOException {
+        new ServiceBookFile(folder.resolve("servicebook.txt")).save(new ServiceBook());
+
+        try (var files = Files.list(folder)) {
+            assertEquals(List.of(folder.resolve("servicebook.txt")), files.toList());
+        }
+    }
+
+    @Test
     void createsMissingFolders() throws IOException {
         Path path = folder.resolve("nested").resolve("servicebook.txt");
 
