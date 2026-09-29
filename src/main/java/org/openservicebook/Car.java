@@ -1,6 +1,8 @@
 package org.openservicebook;
 
 import java.time.Year;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public final class Car {
@@ -9,6 +11,7 @@ public final class Car {
     private final String make;
     private final String model;
     private final Year modelYear;
+    private final List<Service> services = new ArrayList<>();
 
     public Car(String vin, String make, String model, Year modelYear) {
         this.vin = requireNonBlank(vin, "vin");
@@ -31,6 +34,14 @@ public final class Car {
 
     public Year getModelYear() {
         return modelYear;
+    }
+
+    public void addService(Service service) {
+        services.add(Objects.requireNonNull(service, "service"));
+    }
+
+    public List<Service> getServices() {
+        return List.copyOf(services);
     }
 
     @Override

@@ -2,8 +2,11 @@ package org.openservicebook;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDate;
 import java.time.Year;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -32,6 +35,40 @@ class CarTest {
         assertThrows(NullPointerException.class, () -> new Car("WVWZZZ1JZXW000001", null, "Golf", Year.of(1999)));
         assertThrows(NullPointerException.class, () -> new Car("WVWZZZ1JZXW000001", "Volkswagen", null, Year.of(1999)));
         assertThrows(NullPointerException.class, () -> new Car("WVWZZZ1JZXW000001", "Volkswagen", "Golf", null));
+    }
+
+    @Test
+    void startsWithNoServices() {
+        Car car = new Car("WVWZZZ1JZXW000001", "Volkswagen", "Golf", Year.of(1999));
+
+        assertTrue(car.getServices().isEmpty());
+    }
+
+    @Test
+    void keepsServicesInTheOrderTheyWereAdded() {
+        Car car = new Car("WVWZZZ1JZXW000001", "Volkswagen", "Golf", Year.of(1999));
+        Service oilChange = new Service(LocalDate.of(2026, 3, 1), 110_000, "Oil change");
+        Service brakes = new Service(LocalDate.of(2026, 9, 1), 120_000, "Brake pads");
+
+        car.addService(oilChange);
+        car.addService(brakes);
+
+        assertEquals(List.of(oilChange, brakes), car.getServices());
+    }
+
+    @Test
+    void rejectsNullService() {
+        Car car = new Car("WVWZZZ1JZXW000001", "Volkswagen", "Golf", Year.of(1999));
+
+        assertThrows(NullPointerException.class, () -> car.addService(null));
+    }
+
+    @Test
+    void servicesCannotBeModifiedThroughTheGetter() {
+        Car car = new Car("WVWZZZ1JZXW000001", "Volkswagen", "Golf", Year.of(1999));
+        Service oilChange = new Service(LocalDate.of(2026, 3, 1), 110_000, "Oil change");
+
+        assertThrows(UnsupportedOperationException.class, () -> car.getServices().add(oilChange));
     }
 
     @Test
