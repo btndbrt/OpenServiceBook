@@ -8,8 +8,9 @@ public final class Service {
     private final LocalDate date;
     private final int mileage;
     private final String description;
+    private final Money cost;
 
-    public Service(LocalDate date, int mileage, String description) {
+    public Service(LocalDate date, int mileage, String description, Money cost) {
         this.date = Objects.requireNonNull(date, "date");
         if (mileage < 0) {
             throw new IllegalArgumentException("mileage must not be negative");
@@ -20,6 +21,7 @@ public final class Service {
             throw new IllegalArgumentException("description must not be blank");
         }
         this.description = description.strip();
+        this.cost = Objects.requireNonNull(cost, "cost");
     }
 
     public LocalDate getDate() {
@@ -34,21 +36,27 @@ public final class Service {
         return description;
     }
 
+    public Money getCost() {
+        return cost;
+    }
+
     @Override
     public boolean equals(Object o) {
         return o instanceof Service other
                 && date.equals(other.date)
                 && mileage == other.mileage
-                && description.equals(other.description);
+                && description.equals(other.description)
+                && cost.equals(other.cost);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(date, mileage, description);
+        return Objects.hash(date, mileage, description, cost);
     }
 
     @Override
     public String toString() {
-        return "Service[date=" + date + ", mileage=" + mileage + ", description=" + description + "]";
+        return "Service[date=" + date + ", mileage=" + mileage + ", description=" + description
+                + ", cost=" + cost + "]";
     }
 }
