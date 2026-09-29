@@ -16,11 +16,7 @@ public final class Service {
             throw new IllegalArgumentException("mileage must not be negative");
         }
         this.mileage = mileage;
-        Objects.requireNonNull(description, "description");
-        if (description.isBlank()) {
-            throw new IllegalArgumentException("description must not be blank");
-        }
-        this.description = description.strip();
+        this.description = Text.requireSingleLine(description, "description");
         this.cost = Objects.requireNonNull(cost, "cost");
     }
 

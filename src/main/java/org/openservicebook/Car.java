@@ -14,9 +14,9 @@ public final class Car {
     private final List<Service> services = new ArrayList<>();
 
     public Car(String vin, String make, String model, Year modelYear) {
-        this.vin = requireNonBlank(vin, "vin");
-        this.make = requireNonBlank(make, "make");
-        this.model = requireNonBlank(model, "model");
+        this.vin = Text.requireSingleLine(vin, "vin");
+        this.make = Text.requireSingleLine(make, "make");
+        this.model = Text.requireSingleLine(model, "model");
         this.modelYear = Objects.requireNonNull(modelYear, "modelYear");
     }
 
@@ -61,13 +61,5 @@ public final class Car {
     @Override
     public String toString() {
         return "Car[vin=" + vin + ", make=" + make + ", model=" + model + ", modelYear=" + modelYear + "]";
-    }
-
-    private static String requireNonBlank(String value, String name) {
-        Objects.requireNonNull(value, name);
-        if (value.isBlank()) {
-            throw new IllegalArgumentException(name + " must not be blank");
-        }
-        return value.strip();
     }
 }

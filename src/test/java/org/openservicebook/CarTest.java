@@ -30,6 +30,13 @@ class CarTest {
     }
 
     @Test
+    void rejectsTabsAndLineBreaks() {
+        assertThrows(IllegalArgumentException.class, () -> new Car("WVWZZZ1JZXW000001", "Volks\twagen", "Golf", Year.of(1999)));
+        assertThrows(IllegalArgumentException.class, () -> new Car("WVWZZZ1JZXW000001", "Volkswagen", "Golf\nGTI", Year.of(1999)));
+        assertThrows(IllegalArgumentException.class, () -> new Car("WVWZZZ1JZXW\r000001", "Volkswagen", "Golf", Year.of(1999)));
+    }
+
+    @Test
     void rejectsNulls() {
         assertThrows(NullPointerException.class, () -> new Car(null, "Volkswagen", "Golf", Year.of(1999)));
         assertThrows(NullPointerException.class, () -> new Car("WVWZZZ1JZXW000001", null, "Golf", Year.of(1999)));

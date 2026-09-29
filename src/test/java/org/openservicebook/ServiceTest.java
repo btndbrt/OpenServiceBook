@@ -38,6 +38,12 @@ class ServiceTest {
     }
 
     @Test
+    void rejectsTabsAndLineBreaksInDescription() {
+        assertThrows(IllegalArgumentException.class, () -> new Service(DATE, 120_000, "Oil\tchange", COST));
+        assertThrows(IllegalArgumentException.class, () -> new Service(DATE, 120_000, "Oil change\nand filter", COST));
+    }
+
+    @Test
     void rejectsNulls() {
         assertThrows(NullPointerException.class, () -> new Service(null, 120_000, "Oil change", COST));
         assertThrows(NullPointerException.class, () -> new Service(DATE, 120_000, null, COST));
