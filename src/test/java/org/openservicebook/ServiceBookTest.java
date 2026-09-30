@@ -87,6 +87,43 @@ class ServiceBookTest {
     }
 
     @Test
+    void replaceCarKeepsItsPlaceInTheList() {
+        ServiceBook book = new ServiceBook();
+        book.addCar(GOLF);
+        book.addCar(ACCORD);
+        Car newPlate = new Car("WVWZZZ1JZXW000001", "NEW-111", "Volkswagen", "Golf", Year.of(1999));
+
+        book.replaceCar(GOLF, newPlate);
+
+        assertEquals(List.of(newPlate, ACCORD), book.getCars());
+    }
+
+    @Test
+    void replaceCarRejectsVinOrPlateOfAnotherCar() {
+        ServiceBook book = new ServiceBook();
+        book.addCar(GOLF);
+        book.addCar(ACCORD);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> book.replaceCar(GOLF, new Car("WVWZZZ1JZXW000001", "XYZ-789", "Volkswagen", "Golf", Year.of(1999))));
+        assertThrows(IllegalArgumentException.class,
+                () -> book.replaceCar(GOLF, new Car("JHMCM56557C404453", "ABC-123", "Volkswagen", "Golf", Year.of(1999))));
+        assertEquals(List.of(GOLF, ACCORD), book.getCars());
+    }
+
+    @Test
+    void removeCar() {
+        ServiceBook book = new ServiceBook();
+        book.addCar(GOLF);
+        book.addCar(ACCORD);
+
+        book.removeCar(GOLF);
+
+        assertEquals(List.of(ACCORD), book.getCars());
+        assertThrows(IllegalArgumentException.class, () -> book.removeCar(GOLF));
+    }
+
+    @Test
     void carsCannotBeAddedThroughTheGetter() {
         ServiceBook book = new ServiceBook();
 

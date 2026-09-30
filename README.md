@@ -59,8 +59,42 @@ osb services ABC-123
 ```
 
 ```
-2026-09-01    120000       89.90  Oil change
+  1  2026-09-01    120000       89.90  Oil change
+  2  2026-09-15    120400      250.00  Brake pads
 ```
+
+The number at the start of each line is how `edit-service` and `delete-service` pick a service.
+
+### Edit a car or a service
+
+Change one field at a time:
+
+```sh
+osb edit-car <vin-or-plate> <field> <new-value>
+osb edit-car ABC-123 plate XYZ-999
+osb edit-car ABC-123 model Golf GTI
+
+osb edit-service <vin-or-plate> <number> <field> <new-value>
+osb edit-service ABC-123 2 cost 95.00
+osb edit-service ABC-123 2 description Front brake pads
+```
+
+- Car fields: `vin`, `plate`, `make`, `model`, `year`.
+- Service fields: `date`, `mileage`, `cost`, `description`.
+- New values follow the same rules as when adding, and may contain spaces without quotes.
+
+### Delete a car or a service
+
+```sh
+osb delete-service <vin-or-plate> <number>
+osb delete-service ABC-123 2
+
+osb delete-car <vin-or-plate>
+osb delete-car ABC-123
+```
+
+Deleting a car also deletes all of its services. There is no undo, so back up
+`~/.openservicebook/servicebook.txt` first if you are unsure.
 
 ### Show all commands
 
@@ -75,4 +109,3 @@ osb help
 - Your data is saved to `~/.openservicebook/servicebook.txt`. It is plain text, one car or service per line
   with fields separated by tabs, so it is easy to back up or read. If you edit it by hand, keep the tabs;
   the program reports the line number if something is wrong.
-- Cars and services cannot be edited or deleted from the command line yet; to fix a typo, edit the file.

@@ -77,6 +77,22 @@ class CarTest {
     }
 
     @Test
+    void replacesAndRemovesServicesByIndex() {
+        Car car = new Car(VIN, PLATE, "Volkswagen", "Golf", Year.of(1999));
+        Service oilChange = new Service(LocalDate.of(2026, 3, 1), 110_000, "Oil change", Money.parse("89.90"));
+        Service brakes = new Service(LocalDate.of(2026, 9, 1), 120_000, "Brake pads", Money.parse("245.00"));
+        Service tyres = new Service(LocalDate.of(2026, 10, 1), 121_000, "Tyres", Money.parse("400.00"));
+        car.addService(oilChange);
+        car.addService(brakes);
+
+        car.replaceService(1, tyres);
+        assertEquals(List.of(oilChange, tyres), car.getServices());
+
+        car.removeService(0);
+        assertEquals(List.of(tyres), car.getServices());
+    }
+
+    @Test
     void rejectsNullService() {
         Car car = new Car(VIN, PLATE, "Volkswagen", "Golf", Year.of(1999));
 

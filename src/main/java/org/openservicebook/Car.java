@@ -49,6 +49,15 @@ public final class Car {
         services.add(Objects.requireNonNull(service, "service"));
     }
 
+    // index counts from 0, like a List; the command line turns the user's service number into it.
+    public void replaceService(int index, Service service) {
+        services.set(index, Objects.requireNonNull(service, "service"));
+    }
+
+    public void removeService(int index) {
+        services.remove(index);
+    }
+
     public List<Service> getServices() {
         return List.copyOf(services);
     }
